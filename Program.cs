@@ -33,7 +33,7 @@ namespace BlogsConsole
                     // Create and save a new Blog
                     Console.Write("Enter a name for a new Blog: ");
                     var name = Console.ReadLine();
-                    var blog = new Blog { Name = name };
+                    var blog = new Blog {Name = name};
                     db.AddBlog(blog);
                     logger.Info("Blog added - {name}", name); 
                 }
@@ -44,29 +44,53 @@ namespace BlogsConsole
                     {
                         Console.WriteLine(item.Name);
                     }
-                    Console.WriteLine("Enter the name of the blog you would like to post to:");
-                    string selection = Console.ReadLine();
-                    var selectedBlog = db.Blogs.Where(b => b.Name.Contains(selection));
-                    Console.Write("Please enter a number for the ID of the post: ");
+                    Console.WriteLine("\nEnter the name of the blog you would like to post to:");
                     try
                     {
-                        post.PostId = Int32.Parse(Console.ReadLine());
+                        string selection = Console.ReadLine();
+                        Blog selectedBlog = db.Blogs.First(b => b.Name.Contains(selection));
+                        Console.Write("What is the title of the post: ");
+                        post.Title = Console.ReadLine();
+                        Console.Write("What is the content of the post: ");
+                        post.Content = Console.ReadLine();
+                        post.BlogId = selectedBlog.BlogId;
+                        post.Blog = selectedBlog;
+                        db.AddPost(post);
                     }
-                    catch (Exception ex)
+                    catch(Exception xx)
                     {
-                        logger.Error(ex.Message);
+                        logger.Error(xx.Message);
+                        Console.WriteLine("Invalid choice");
                     }
-                    Console.Write("What is the title of the post: ");
-                    post.Title = Console.ReadLine();
-                    Console.Write("What is the content of the post: ");
-                    post.Content = Console.ReadLine();
-                    
                 }
                 else
                 {
-
+                    var blogs = query.ToArray();
+                    int count = 1;
+                    int counter = 0;
+                    foreach (var item in blogs)
+                    {
+                        Console.WriteLine(count + ". " + item.Name);
+                        count++;
+                    }
+                    Console.Write("\nEnter the number of the blog you would like to view the posts from: ");
+                    try
+                    {
+                        int selection = Convert.ToInt32(Console.ReadLine());
+                        var selectedPosts = db.Posts.Where(b => b.BlogId.Equals(blogs[selection - 1].BlogId));
+                        foreach(Post post in selectedPosts)
+                        {
+                            Console.WriteLine($"Blog name: {post.Blog.Name}, Title: {post.Title}, Content: {post.Content}");
+                            counter++;
+                        }
+                        Console.WriteLine("\nNumber of posts in this blog: " + counter +  "\n");
+                    }
+                    catch (Exception xz)
+                    {
+                        logger.Error(xz.Message);
+                    }
                 }
-                logger.Info("Program ended");
+                logger.Info("\nProgram ended");
             }
             catch (Exception xy)
             {
