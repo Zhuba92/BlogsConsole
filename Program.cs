@@ -40,6 +40,7 @@ namespace BlogsConsole
                 else if(choice == 3)
                 {
                     Post post = new Post();
+                    Console.WriteLine("Available blogs:");
                     foreach (var item in query)
                     {
                         Console.WriteLine(item.Name);
@@ -63,7 +64,7 @@ namespace BlogsConsole
                         Console.WriteLine("Invalid choice");
                     }
                 }
-                else
+                else if (choice == 4)
                 {
                     var blogs = query.ToArray();
                     int count = 1;
